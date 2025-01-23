@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop - FreshGrocer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            background-color: #F5F7F8;
+            color: #333333;
+            overflow-x: hidden;
+        }
+        .custom-gradient {
+            background: linear-gradient(135deg, #0F7173 0%, #0A4F51 100%);
+        }
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+        @keyframes wiggle {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-5deg); }
+            75% { transform: rotate(5deg); }
+        }
+        .animate-fade-in-up {
+            animation: fadeInUp 1s ease-out;
+        }
+        .animate-pulse {
+            animation: pulse 2s infinite;
+        }
+        .animate-wiggle {
+            animation: wiggle 0.5s ease-in-out;
+        }
+    </style>
+</head>
+<body>
+    <nav class="bg-white shadow-lg fixed top-0 left-0 right-0 z-50">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="index.html" class="text-3xl font-bold text-[#0F7173] transform transition-all duration-300 hover:scale-105 hover:text-opacity-80">FreshGrocer</a>
+            
+            <div class="flex items-center space-x-8">
+                <div class="flex space-x-6 bg-gray-100 rounded-full px-4 py-2 shadow-inner">
+                    <a href="index.html" class="relative group text-[#333333] hover:text-[#0F7173] transition-all duration-300 ease-in-out">
+                        <span class="relative z-10">Home</span>
+                        <div class="absolute bottom-[-4px] left-0 right-0 h-1 bg-[#0F7173] scale-x-0 group-hover:scale-x-100 origin-center transition-transform duration-300 rounded-full"></div>
+                    </a>
+                    <a href="shop.html" class="relative group text-[#333333] hover:text-[#0F7173] transition-all duration-300 ease-in-out">
+                        <span class="relative z-10">Shop</span>
+                        <div class="absolute bottom-[-4px] left-0 right-0 h-1 bg-[#0F7173] scale-x-0 group-hover:scale-x-100 origin-center transition-transform duration-300 rounded-full"></div>
+                    </a>
+                    <a href="categories.html" class="relative group text-[#333333] hover:text-[#0F7173] transition-all duration-300 ease-in-out">
+                        <span class="relative z-10">Categories</span>
+                        <div class="absolute bottom-[-4px] left-0 right-0 h-1 bg-[#0F7173] scale-x-0 group-hover:scale-x-100 origin-center transition-transform duration-300 rounded-full"></div>
+                    </a>
+                    <a href="about.html" class="relative group text-[#333333] hover:text-[#0F7173] transition-all duration-300 ease-in-out">
+                        <span class="relative z-10">About</span>
+                        <div class="absolute bottom-[-4px] left-0 right-0 h-1 bg-[#0F7173] scale-x-0 group-hover:scale-x-100 origin-center transition-transform duration-300 rounded-full"></div>
+                    </a>
+                </div>
+
+                <div class="flex items-center">
+                    <button id="cart-btn" class="relative text-[#333333] hover:text-[#0F7173] transition-all duration-300 group">
+                        <div class="relative inline-block">
+                            <i class="fas fa-shopping-cart text-xl transform transition-transform duration-300 group-hover:rotate-12 group-hover:scale-110"></i>
+                            <span id="cart-count" class="absolute -top-3 -right-3 bg-[#FF6B6B] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center transform transition-all duration-300 group-hover:scale-110 group-hover:bg-opacity-80">0</span>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <header class="custom-gradient text-white py-24">
+        <div class="container mx-auto px-4 text-center">
+            <h1 class="text-5xl font-bold mb-6">Our Product Selection</h1>
+            <p class="text-xl opacity-80">Discover fresh, high-quality groceries curated for your lifestyle</p>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-16">
+        <section class="container mx-auto px-4 py-8">
+            <div class="flex flex-row justify-between items-center mb-8 gap-4">
+                <div class="flex flex-row space-x-4 sm:space-x-1  sm:flex-row sm:w-full">
+                    <select id="category-filter" class="border border-gray-300 rounded-full px-4 py-2 w-full sm:w-full md:w-auto focus:outline-none focus:ring-2 focus:ring-[#0F7173]">
+                        <option value="All">All Categories</option>
+                        <option value="Fruits">Fruits</option>
+                        <option value="Vegetables">Vegetables</option>
+                        <option value="Dairy">Dairy</option>
+                        <option value="Bakery">Bakery</option>
+                        <option value="Snacks">Snacks</option>
+                        <option value="Drinks">Drinks</option>
+                    </select>
+                    <select id="price-filter" class="border border-gray-300 rounded-full px-4 py-2 w-full sm:w-full md:w-auto focus:outline-none focus:ring-2 focus:ring-[#0F7173]">
+                        <option value="All">All Prices</option>
+                        <option value="0-5">$0 - $5</option>
+                        <option value="5-10">$5 - $10</option>
+                        <option value="10+">$10+</option>
+                    </select>
+                </div>
+                <div class="relative w-full sm:w-full md:w-auto">
+                    <input type="text" id="search-input" placeholder="Search products" class="border border-gray-300 rounded-full px-4 py-2 w-full sm:w-full md:w-60 focus:outline-none focus:ring-2 focus:ring-[#0F7173]">
+                    <i class="fas fa-search absolute right-4 top-3 text-gray-400"></i>
+                </div>
+            </div>
+            
+            <div id="products" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
+
+            </div>
+        </section>
+    </main>
+    
+
+    <div id="cart-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-lg w-1/2 max-h-[80vh] overflow-y-auto p-8">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-3xl font-bold text-[#0F7173]">My Cart</h2>
+                <button id="close-cart" class="text-gray-600 hover:text-[#FF6B6B]">
+                    <i class="fas fa-times text-2xl"></i>
+                </button>
+            </div>
+            <div id="cart-items" class="space-y-4">
+            </div>
+            <div class="mt-6 pt-6 border-t flex justify-between items-center">
+                <span class="text-2xl font-semibold">Total: $<span id="cart-total">0</span></span>
+                <button class="bg-[#0F7173] text-white px-6 py-3 rounded-full hover:bg-[#0A4F51]">
+                    Checkout
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-[#0F7173] text-white py-12 md:py-16">
+        <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div>
+                <h3 class="text-2xl font-bold mb-4">SmartGrocery</h3>
+                <p class="text-white opacity-80 mb-4">Revolutionizing grocery shopping with smart technology and fresh, quality products.</p>
+                <div class="flex space-x-4">
+                    <a href="#" class="text-white hover:text-[#FF6B6B]"><i class="fab fa-twitter text-xl"></i></a>
+                    <a href="#" class="text-white hover:text-[#FF6B6B]"><i class="fab fa-instagram text-xl"></i></a>
+                    <a href="#" class="text-white hover:text-[#FF6B6B]"><i class="fab fa-linkedin text-xl"></i></a>
+                </div>
+            </div>
+            <div>
+                <h4 class="font-semibold mb-4 text-white">Quick Links</h4>
+                <ul class="space-y-2">
+                    <li><a href="index.html" class="text-white opacity-80 hover:opacity-100">Home</a></li>
+                    <li><a href="shop.html" class="text-white opacity-80 hover:opacity-100">Shop</a></li>
+                    <li><a href="categories.html" class="text-white opacity-80 hover:opacity-100">Categories</a></li>
+                    <li><a href="about.html" class="text-white opacity-80 hover:opacity-100">About</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-semibold mb-4 text-white">Support</h4>
+                <ul class="space-y-2">
+                    <li><a href="#" class="text-white opacity-80 hover:opacity-100">Help Center</a></li>
+                    <li><a href="#" class="text-white opacity-80 hover:opacity-100">Shipping</a></li>
+                    <li><a href="#" class="text-white opacity-80 hover:opacity-100">Returns</a></li>
+                    <li><a href="#" class="text-white opacity-80 hover:opacity-100">Contact</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-semibold mb-4 text-white">Newsletter</h4>
+                <p class="text-white opacity-80 mb-4">Stay updated with our latest offers and products.</p>
+                <div class="flex">
+                    <input type="email" placeholder="Your email" class="px-4 py-2 rounded-l-full w-full text-gray-800">
+                    <button class="bg-[#FF6B6B] text-white px-4 rounded-r-full hover:bg-[#FF5252]">
+                        Subscribe
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="container mx-auto px-4 mt-8 text-center border-t border-[#0A4F51] pt-4">
+            <p class="text-white opacity-60">&copy; 2024 SmartGrocery. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const productItems = document.querySelectorAll('#products .product-card');
+            productItems.forEach((item, index) => {
+                item.style.animationDelay = `${index * 0.2}s`;
+                item.classList.add('animate-fade-in-up');
+            });
+
+            productItems.forEach(product => {
+                product.addEventListener('mouseenter', () => {
+                    product.classList.add('animate-pulse');
+                });
+                product.addEventListener('mouseleave', () => {
+                    product.classList.remove('animate-pulse');
+                });
+            });
+
+            const cartBtn = document.getElementById('cart-btn');
+            cartBtn.addEventListener('click', () => {
+                cartBtn.classList.add('animate-wiggle');
+                setTimeout(() => {
+                    cartBtn.classList.remove('animate-wiggle');
+                }, 500);
+            });
+        });
+    </script>
+    <script src="script.js"></script>
+</body>
+</html>
