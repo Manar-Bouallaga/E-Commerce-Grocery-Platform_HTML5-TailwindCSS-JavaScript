@@ -199,7 +199,6 @@
         </div>
     </div>
 
-    {# Cart Modal JavaScript #}
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const cartModal = document.getElementById('cart-modal');
@@ -209,19 +208,16 @@
             const cartTotal = document.getElementById('cart-total');
             const emptyCartMessage = document.getElementById('empty-cart-message');
 
-            // Toggle cart modal
             cartBtn.addEventListener('click', () => {
                 cartModal.classList.remove('hidden');
                 cartModal.classList.add('flex');
             });
 
-            // Close cart modal
             closeCartBtn.addEventListener('click', () => {
                 cartModal.classList.add('hidden');
                 cartModal.classList.remove('flex');
             });
 
-            // Close modal when clicking outside
             cartModal.addEventListener('click', (event) => {
                 if (event.target === cartModal) {
                     cartModal.classList.add('hidden');
@@ -229,7 +225,6 @@
                 }
             });
 
-            // Responsive handling for mobile
             function handleResponsiveCart() {
                 const isMobile = window.innerWidth < 768;
                 const modalContent = document.querySelector('#cart-modal > div');
@@ -243,10 +238,8 @@
                 }
             }
 
-            // Initial responsive check
             handleResponsiveCart();
 
-            // Responsive check on window resize
             window.addEventListener('resize', handleResponsiveCart);
         });
     </script>
@@ -325,7 +318,6 @@
     </script>
     <script src="script.js"></script>
     <script>
-        // Mobile menu toggle
         document.addEventListener('DOMContentLoaded', function() {
             const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
             const mobileMenu = document.getElementById('mobile-menu');
