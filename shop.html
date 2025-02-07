@@ -179,7 +179,6 @@
         </div>
     </div>
 
-    {# Cart Modal JavaScript #}
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const cartModal = document.getElementById('cart-modal');
@@ -189,13 +188,11 @@
             const cartTotal = document.getElementById('cart-total');
             const emptyCartMessage = document.getElementById('empty-cart-message');
 
-            // Toggle cart modal
             cartBtn.addEventListener('click', () => {
                 cartModal.classList.remove('hidden');
                 cartModal.classList.add('flex');
             });
 
-            // Close cart modal
             closeCartBtn.addEventListener('click', () => {
                 cartModal.classList.add('hidden');
                 cartModal.classList.remove('flex');
@@ -223,10 +220,8 @@
                 }
             }
 
-            // Initial responsive check
             handleResponsiveCart();
 
-            // Responsive check on window resize
             window.addEventListener('resize', handleResponsiveCart);
         });
     </script>
