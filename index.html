@@ -3,17 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SmartGrocery - Modern Grocery Delivery</title>
+    <title>FreshGrocer - Premium Grocery Delivery</title>
     <script src="https://cdn.tailwindcss.com"></script>
-<link rel="icon" href="Code&Grow.png" type="image/x-icon">
+    <link rel="icon" href="Code&Grow.png" type="image/x-icon">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         body {
-            background-color: #F5F7F8;
+            background-color: #F8FAFC;
             color: #333333;
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
         }
         .custom-gradient {
             background: linear-gradient(135deg, #0F7173 0%, #0A4F51 100%);
+        }
+        .category-card {
+            transition: all 0.3s ease;
+        }
+        .category-card:hover {
+            transform: translateY(-5px);
+        }
+        .product-card {
+            transition: all 0.3s ease;
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+        }
+        .badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            z-index: 10;
+        }
+        .badge-new {
+            background-color: #0F7173;
+            color: white;
+        }
+        .badge-sale {
+            background-color: #FF6B6B;
+            color: white;
         }
         @keyframes slideInFromLeft {
             0% {
@@ -25,7 +56,6 @@
                 transform: translateX(0);
             }
         }
-
         @keyframes slideInFromRight {
             0% {
                 opacity: 0;
@@ -36,23 +66,60 @@
                 transform: translateX(0);
             }
         }
-
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+        @keyframes wiggle {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-5deg); }
+            75% { transform: rotate(5deg); }
+        }
         .animate-slide-left {
             animation: slideInFromLeft 1s ease-out;
         }
-
         .animate-slide-right {
             animation: slideInFromRight 1s ease-out;
+        }
+        .animate-fade-in-up {
+            animation: fadeInUp 1s ease-out;
+        }
+        .animate-pulse {
+            animation: pulse 2s infinite;
+        }
+        .animate-wiggle {
+            animation: wiggle 0.5s ease-in-out;
+        }
+        .cart-btn-effect:hover {
+            box-shadow: 0 0 15px rgba(15, 113, 115, 0.5);
         }
     </style>
 </head>
 <body>
+    <!-- Navigation -->
     <nav class="bg-white shadow-lg fixed top-0 left-0 right-0 z-50">
         <div class="container mx-auto px-4 py-4 flex flex-wrap justify-between items-center">
             <a href="index.html" class="text-2xl md:text-3xl font-bold text-[#0F7173] transform transition-all duration-300 hover:scale-105">FreshGrocer</a>
             
             <div class="md:hidden">
-                <button id="mobile-menu-toggle" class="text-[#333333] hover:text-[#0F7173] focus:outline-none">
+                <button id="mobile-menu-toggle" class="text-[#333333] hover:text-[#0F7173] focus:outline-none" aria-expanded="false" aria-label="Toggle navigation">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
                     </svg>
@@ -66,13 +133,19 @@
                 transition-all duration-300 ease-in-out
                 hidden md:block">
                 <div class="flex flex-col md:flex-row items-start md:items-center space-y-2 md:space-y-0 md:space-x-6">
-                    <a href="index.html" class="text-[#333333] hover:text-[#0F7173] transition-colors">Home</a>
+                    <a href="index.html" class="text-[#0F7173] font-medium border-b-2 border-[#0F7173] pb-1 transition-colors">Home</a>
                     <a href="shop.html" class="text-[#333333] hover:text-[#0F7173] transition-colors">Shop</a>
                     <a href="categories.html" class="text-[#333333] hover:text-[#0F7173] transition-colors">Categories</a>
                     <a href="about.html" class="text-[#333333] hover:text-[#0F7173] transition-colors">About</a>
                 </div>
 
-                <div class="mt-4 md:mt-0 md:ml-4">
+                <div class="mt-4 md:mt-0 md:ml-4 flex items-center space-x-4">
+                    <button class="text-[#333333] hover:text-[#0F7173] transition-all duration-300">
+                        <i class="fas fa-search text-xl"></i>
+                    </button>
+                    <button class="text-[#333333] hover:text-[#0F7173] transition-all duration-300">
+                        <i class="fas fa-user text-xl"></i>
+                    </button>
                     <button id="cart-btn" class="relative text-[#333333] hover:text-[#0F7173] transition-all duration-300 group">
                         <i class="fas fa-shopping-cart text-xl"></i>
                         <span id="cart-count" class="absolute -top-3 -right-3 bg-[#FF6B6B] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">0</span>
@@ -82,8 +155,324 @@
         </div>
     </nav>
 
+    <div class="pt-20"></div>
+
+    <!-- Hero Section -->
+    <header class="custom-gradient text-white py-16 md:py-24">
+        <div class="container mx-auto px-4 flex flex-col md:flex-row items-center">
+            <div class="w-full md:w-1/2 md:pr-12 text-center md:text-left mb-8 md:mb-0 animate-slide-left">
+                <h1 class="text-3xl md:text-5xl font-bold mb-4 md:mb-6">Fresh Groceries, Delivered Smart</h1>
+                <p class="text-base md:text-xl mb-6 md:mb-8 opacity-90">Discover a new way of grocery shopping. Curated, fresh, and delivered right to your doorstep with precision and care.</p>
+                <div class="flex justify-center md:justify-start space-x-4">
+                    <a href="shop.html" class="bg-[#FF6B6B] text-white px-6 py-2 md:px-8 md:py-3 rounded-full hover:bg-[#FF5252] transition-colors">Shop Now</a>
+                    <a href="about.html" class="border border-white text-white px-6 py-2 md:px-8 md:py-3 rounded-full hover:bg-white hover:text-[#0F7173] transition-colors">Learn More</a>
+                </div>
+            </div>
+            <div class="w-full md:w-1/2 animate-slide-right">
+                <img src="food-delivery_16779174.png" alt="Fresh grocery delivery" class="rounded-lg shadow-2xl w-full">
+            </div>
+        </div>
+    </header>
+
+    <!-- Features Section -->
+    <section class="py-12 md:py-20">
+        <div class="container mx-auto px-4">
+            <h2 class="text-2xl md:text-3xl font-bold text-center text-gray-800 mb-12">Why Choose FreshGrocer?</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-white rounded-lg shadow-md p-6 text-center hover:shadow-xl transition-shadow animate-fade-in-up" style="animation-delay: 0.1s;">
+                    <div class="bg-[#0F7173] text-white rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-truck-fast text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2 text-gray-800">Fast Delivery</h3>
+                    <p class="text-gray-600">Get your groceries delivered within hours, not days. Fresh from our store to your door.</p>
+                </div>
+                <div class="bg-white rounded-lg shadow-md p-6 text-center hover:shadow-xl transition-shadow animate-fade-in-up" style="animation-delay: 0.3s;">
+                    <div class="bg-[#0F7173] text-white rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-leaf text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2 text-gray-800">Fresh & Organic</h3>
+                    <p class="text-gray-600">We source the freshest, highest-quality produce from local farmers and trusted suppliers.</p>
+                </div>
+                <div class="bg-white rounded-lg shadow-md p-6 text-center hover:shadow-xl transition-shadow animate-fade-in-up" style="animation-delay: 0.5s;">
+                    <div class="bg-[#0F7173] text-white rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-shield-alt text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2 text-gray-800">Quality Guaranteed</h3>
+                    <p class="text-gray-600">Not satisfied? We offer a 100% satisfaction guarantee on all our products.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories Section -->
+    <section class="py-12 md:py-20 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center mb-12">
+                <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-4 md:mb-0">Explore Categories</h2>
+                <a href="categories.html" class="text-[#0F7173] hover:text-[#0A4F51] font-medium flex items-center">
+                    View All Categories
+                    <i class="fas fa-arrow-right ml-2"></i>
+                </a>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6">
+                <div class="category-card bg-white rounded-lg shadow-md p-4 text-center hover:shadow-xl transition-all">
+                    <div class="bg-[#0F7173] text-white rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4 group-hover:bg-[#FF6B6B] transition-colors">
+                        <i class="fas fa-apple-alt text-2xl"></i>
+                    </div>
+                    <h3 class="font-semibold text-gray-800">Fresh Fruits</h3>
+                    <p class="text-sm text-gray-500">320 Products</p>
+                </div>
+                <div class="category-card bg-white rounded-lg shadow-md p-4 text-center hover:shadow-xl transition-all">
+                    <div class="bg-[#0F7173] text-white rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4 group-hover:bg-[#FF6B6B] transition-colors">
+                        <i class="fas fa-carrot text-2xl"></i>
+                    </div>
+                    <h3 class="font-semibold text-gray-800">Vegetables</h3>
+                    <p class="text-sm text-gray-500">220 Products</p>
+                </div>
+                <div class="category-card bg-white rounded-lg shadow-md p-4 text-center hover:shadow-xl transition-all">
+                    <div class="bg-[#0F7173] text-white rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4 group-hover:bg-[#FF6B6B] transition-colors">
+                        <i class="fas fa-cheese text-2xl"></i>
+                    </div>
+                    <h3 class="font-semibold text-gray-800">Dairy</h3>
+                    <p class="text-sm text-gray-500">160 Products</p>
+                </div>
+                <div class="category-card bg-white rounded-lg shadow-md p-4 text-center hover:shadow-xl transition-all">
+                    <div class="bg-[#0F7173] text-white rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4 group-hover:bg-[#FF6B6B] transition-colors">
+                        <i class="fas fa-bread-slice text-2xl"></i>
+                    </div>
+                    <h3 class="font-semibold text-gray-800">Bakery</h3>
+                    <p class="text-sm text-gray-500">120 Products</p>
+                </div>
+                <div class="category-card bg-white rounded-lg shadow-md p-4 text-center hover:shadow-xl transition-all">
+                    <div class="bg-[#0F7173] text-white rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4 group-hover:bg-[#FF6B6B] transition-colors">
+                        <i class="fas fa-cookie text-2xl"></i>
+                    </div>
+                    <h3 class="font-semibold text-gray-800">Snacks</h3>
+                    <p class="text-sm text-gray-500">180 Products</p>
+                </div>
+                <div class="category-card bg-white rounded-lg shadow-md p-4 text-center hover:shadow-xl transition-all">
+                    <div class="bg-[#0F7173] text-white rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4 group-hover:bg-[#FF6B6B] transition-colors">
+                        <i class="fas fa-wine-bottle text-2xl"></i>
+                    </div>
+                    <h3 class="font-semibold text-gray-800">Drinks</h3>
+                    <p class="text-sm text-gray-500">140 Products</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Products Section -->
+    <section class="py-12 md:py-20">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center mb-12">
+                <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-4 md:mb-0">Featured Products</h2>
+                <a href="shop.html" class="text-[#0F7173] hover:text-[#0A4F51] font-medium flex items-center">
+                    View All Products
+                    <i class="fas fa-arrow-right ml-2"></i>
+                </a>
+            </div>
+            <div id="products" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <!-- Products will be loaded dynamically via JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="py-12 md:py-20 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-2xl md:text-3xl font-bold text-center text-gray-800 mb-12">What Our Customers Say</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-xl transition-shadow">
+                    <div class="flex items-center mb-4">
+                        <div class="text-yellow-400 flex">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <span class="ml-2 text-gray-600">5.0</span>
+                    </div>
+                    <p class="text-gray-600 mb-6">"The quality of the produce is exceptional. Everything arrives fresh and the delivery is always on time. I've completely switched to FreshGrocer for all my grocery needs."</p>
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-gray-300 rounded-full mr-4"></div>
+                        <div>
+                            <h4 class="font-semibold text-gray-800">Sarah Johnson</h4>
+                            <p class="text-sm text-gray-500">Loyal Customer</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-xl transition-shadow">
+                    <div class="flex items-center mb-4">
+                        <div class="text-yellow-400 flex">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                        </div>
+                        <span class="ml-2 text-gray-600">4.5</span>
+                    </div>
+                    <p class="text-gray-600 mb-6">"I love the variety of organic options available. The website is easy to navigate and the delivery is always prompt. Highly recommend their seasonal fruit boxes!"</p>
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-gray-300 rounded-full mr-4"></div>
+                        <div>
+                            <h4 class="font-semibold text-gray-800">Michael Chen</h4>
+                            <p class="text-sm text-gray-500">Health Enthusiast</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-xl transition-shadow">
+                    <div class="flex items-center mb-4">
+                        <div class="text-yellow-400 flex">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <span class="ml-2 text-gray-600">5.0</span>
+                    </div>
+                    <p class="text-gray-600 mb-6">"As a busy parent, FreshGrocer has been a lifesaver. The subscription service ensures we always have fresh food in the house, and my kids love the quality of the fruits!"</p>
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-gray-300 rounded-full mr-4"></div>
+                        <div>
+                            <h4 class="font-semibold text-gray-800">Emily Rodriguez</h4>
+                            <p class="text-sm text-gray-500">Working Parent</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- App Download Section -->
+    <section class="py-12 md:py-20 custom-gradient text-white">
+        <div class="container mx-auto px-4 flex flex-col md:flex-row items-center">
+            <div class="w-full md:w-1/2 text-center md:text-left mb-8 md:mb-0">
+                <h2 class="text-2xl md:text-3xl font-bold mb-4">Download Our Mobile App</h2>
+                <p class="text-lg opacity-90 mb-6">Get exclusive offers, track your orders in real-time, and browse products on the go. Our app makes grocery shopping even more convenient.</p>
+                <div class="flex flex-col sm:flex-row justify-center md:justify-start space-y-4 sm:space-y-0 sm:space-x-4">
+                    <a href="#" class="bg-black text-white px-6 py-3 rounded-lg flex items-center justify-center hover:bg-gray-900 transition-colors">
+                        <i class="fab fa-apple text-2xl mr-2"></i>
+                        <div class="text-left">
+                            <p class="text-xs">Download on the</p>
+                            <p class="text-base font-semibold">App Store</p>
+                        </div>
+                    </a>
+                    <a href="#" class="bg-black text-white px-6 py-3 rounded-lg flex items-center justify-center hover:bg-gray-900 transition-colors">
+                        <i class="fab fa-google-play text-2xl mr-2"></i>
+                        <div class="text-left">
+                            <p class="text-xs">Get it on</p>
+                            <p class="text-base font-semibold">Google Play</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="w-full md:w-1/2 flex justify-center md:justify-end">
+                <img src="/placeholder.svg?height=400&width=300" alt="Mobile App" class="h-64 md:h-80">
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter Section -->
+    <section class="py-12 md:py-16 bg-gray-50">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-4">Join Our Newsletter</h2>
+            <p class="text-gray-600 mb-6 max-w-xl mx-auto">Stay updated with our latest products, special offers, and healthy recipes delivered straight to your inbox.</p>
+            <div class="max-w-md mx-auto flex">
+                <input type="email" placeholder="Your email address" class="flex-1 px-4 py-3 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-[#0F7173]">
+                <button class="bg-[#0F7173] text-white px-6 py-3 rounded-r-lg hover:bg-[#0A4F51] transition-colors">
+                    Subscribe
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Cart Modal -->
+    <div id="cart-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-lg w-full md:w-3/4 lg:w-1/2 max-h-[90vh] overflow-y-auto p-4 md:p-8 relative">
+            <div class="flex justify-between items-center mb-4 md:mb-6">
+                <h2 class="text-2xl md:text-3xl font-bold text-[#0F7173]">My Cart</h2>
+                <button id="close-cart" class="text-gray-600 hover:text-[#FF6B6B] focus:outline-none">
+                    <i class="fas fa-times text-xl md:text-2xl"></i>
+                </button>
+            </div>
+            <div id="cart-items" class="space-y-2 md:space-y-4 max-h-[60vh] overflow-y-auto">
+                <div id="empty-cart-message" class="text-center text-gray-500 py-8">
+                    <i class="fas fa-shopping-basket text-4xl mb-4 text-[#0F7173] opacity-50"></i>
+                    <p class="text-lg">Your cart is empty</p>
+                </div>
+            </div>
+            <div class="sticky bottom-0 bg-white pt-4 mt-4 border-t">
+                <div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+                    <span class="text-xl md:text-2xl font-semibold">
+                        Total: $<span id="cart-total">0</span>
+                    </span>
+                    <button class="w-full md:w-auto bg-[#0F7173] text-white px-6 py-2 md:py-3 rounded-full hover:bg-[#0A4F51] transition-colors cart-btn-effect">
+                        Proceed to Checkout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-[#0F7173] text-white py-12 md:py-16">
+        <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div>
+                <h3 class="text-2xl font-bold mb-4">FreshGrocer</h3>
+                <p class="text-white opacity-80 mb-4">Revolutionizing grocery shopping with smart technology and fresh, quality products.</p>
+                <div class="flex space-x-4">
+                    <a href="#" class="text-white hover:text-[#FF6B6B] transition-colors">
+                        <i class="fab fa-twitter text-xl"></i>
+                    </a>
+                    <a href="#" class="text-white hover:text-[#FF6B6B] transition-colors">
+                        <i class="fab fa-instagram text-xl"></i>
+                    </a>
+                    <a href="https://www.linkedin.com/in/manar-bouallaga-674783269/" class="text-white hover:text-[#FF6B6B] transition-colors">
+                        <i class="fab fa-linkedin text-xl"></i>
+                    </a>
+                </div>
+            </div>
+            <div>
+                <h4 class="font-semibold mb-4 text-white">Quick Links</h4>
+                <ul class="space-y-2">
+                    <li><a href="index.html" class="text-white opacity-80 hover:opacity-100 transition-opacity">Home</a></li>
+                    <li><a href="shop.html" class="text-white opacity-80 hover:opacity-100 transition-opacity">Shop</a></li>
+                    <li><a href="categories.html" class="text-white opacity-80 hover:opacity-100 transition-opacity">Categories</a></li>
+                    <li><a href="about.html" class="text-white opacity-80 hover:opacity-100 transition-opacity">About</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-semibold mb-4 text-white">Support</h4>
+                <ul class="space-y-2">
+                    <li><a href="#" class="text-white opacity-80 hover:opacity-100 transition-opacity">Help Center</a></li>
+                    <li><a href="#" class="text-white opacity-80 hover:opacity-100 transition-opacity">Shipping</a></li>
+                    <li><a href="#" class="text-white opacity-80 hover:opacity-100 transition-opacity">Returns</a></li>
+                    <li><a href="#" class="text-white opacity-80 hover:opacity-100 transition-opacity">Contact</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-semibold mb-4 text-white">Newsletter</h4>
+                <p class="text-white opacity-80 mb-4">Stay updated with our latest offers and products.</p>
+                <div class="flex">
+                    <input type="email" placeholder="Your email" class="px-4 py-2 rounded-l-full w-full text-gray-800 focus:outline-none">
+                    <button class="bg-[#FF6B6B] text-white px-4 rounded-r-full hover:bg-[#FF5252] transition-colors">
+                        Subscribe
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="container mx-auto px-4 mt-8 text-center border-t border-[#0A4F51] pt-4">
+            <p class="text-white opacity-60">&copy; 2024 FreshGrocer. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // Mobile menu toggle
             const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
             const navMenu = document.getElementById('nav-menu');
 
@@ -100,89 +489,11 @@
                     mobileMenuToggle.setAttribute('aria-expanded', 'false');
                 }
             });
-        });
-    </script>
 
-    <br><br>
-    <header class="custom-gradient text-white py-12 md:py-24">
-        <div class="container mx-auto px-4 flex flex-col md:flex-row items-center">
-            <div class="w-full md:w-1/2 md:pr-12 text-center md:text-left mb-8 md:mb-0 animate-slide-left">
-                <h1 class="text-3xl md:text-5xl font-bold mb-4 md:mb-6">Fresh Groceries, Delivered Smart</h1>
-                <p class="text-base md:text-xl mb-6 md:mb-8 opacity-80">Discover a new way of grocery shopping. Curated, fresh, and delivered right to your doorstep with precision and care.</p>
-                <div class="flex justify-center md:justify-start space-x-4">
-                    <a href="shop.html" class="bg-[#FF6B6B] text-white px-6 py-2 md:px-8 md:py-3 rounded-full hover:bg-[#0F7173] transition">Shop Now</a>
-                    <a href="about.html" class="border border-white text-white px-6 py-2 md:px-8 md:py-3 rounded-full hover:bg-white hover:text-[#0F7173] transition">Learn More</a>
-                </div>
-            </div>
-            <div class="w-full md:w-1/2">
-                <img src="food-delivery_16779174.png" class="rounded-r-full shadow-2xl animate-slide-right w-full">
-            </div>
-        </div>
-    </header>
-
-    <section class="py-12 md:py-16">
-        <div class="container mx-auto px-4">
-            <h2 class="text-2xl md:text-3xl font-bold text-center text-[#0F7173] mb-8 md:mb-12">Explore Our Categories</h2>
-            <div class="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-8">
-                <div class="bg-white rounded-lg shadow-md p-6 text-center hover:shadow-xl transition group">
-                    <div class="bg-[#0F7173] text-white rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4 group-hover:bg-[#FF6B6B] transition">
-                        <i class="fas fa-apple-alt text-3xl"></i>
-                    </div>
-                    <h3 class="font-semibold text-lg mb-2">Fresh Fruits</h3>
-                    <p class="text-gray-600">320 Products</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="py-12 md:py-16 bg-gray-50">
-        <div class="container mx-auto px-4">
-            <div class="flex justify-between items-center mb-12">
-                <h2 class="text-2xl md:text-3xl font-bold text-[#0F7173]">Featured Products</h2>
-                <a href="shop.html" class="text-[#0F7173] hover:underline">View All</a>
-            </div>
-            <div id="products" class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
-
-            </div>
-        </div>
-    </section>
-
-    <div id="cart-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4">
-        <div class="bg-white rounded-lg w-full md:w-3/4 lg:w-1/2 max-h-[90vh] overflow-y-auto p-4 md:p-8 relative">
-            <div class="flex justify-between items-center mb-4 md:mb-6">
-                <h2 class="text-2xl md:text-3xl font-bold text-[#0F7173]">My Cart</h2>
-                <button id="close-cart" class="text-gray-600 hover:text-[#FF6B6B] focus:outline-none">
-                    <i class="fas fa-times text-xl md:text-2xl"></i>
-                </button>
-            </div>
-            <div id="cart-items" class="space-y-2 md:space-y-4 max-h-[60vh] overflow-y-auto">
-
-                <div id="empty-cart-message" class="text-center text-gray-500 py-8">
-                    <i class="fas fa-shopping-basket text-4xl mb-4 text-[#0F7173] opacity-50"></i>
-                    <p class="text-lg">Your cart is empty</p>
-                </div>
-            </div>
-            <div class="sticky bottom-0 bg-white pt-4 mt-4 border-t">
-                <div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-                    <span class="text-xl md:text-2xl font-semibold">
-                        Total: $<span id="cart-total">0</span>
-                    </span>
-                    <button class="w-full md:w-auto bg-[#0F7173] text-white px-6 py-2 md:py-3 rounded-full hover:bg-[#0A4F51] transition-colors">
-                        Proceed to Checkout
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
+            // Cart modal functionality
             const cartModal = document.getElementById('cart-modal');
             const cartBtn = document.getElementById('cart-btn');
             const closeCartBtn = document.getElementById('close-cart');
-            const cartItems = document.getElementById('cart-items');
-            const cartTotal = document.getElementById('cart-total');
-            const emptyCartMessage = document.getElementById('empty-cart-message');
 
             cartBtn.addEventListener('click', () => {
                 cartModal.classList.remove('hidden');
@@ -215,56 +526,16 @@
             }
 
             handleResponsiveCart();
-
             window.addEventListener('resize', handleResponsiveCart);
+
+            // Animation for category cards
+            const categoryCards = document.querySelectorAll('.category-card');
+            categoryCards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.1}s`;
+                card.classList.add('animate-fade-in-up');
+            });
         });
     </script>
-
-    <footer class="bg-[#0F7173] text-white py-12 md:py-16">
-        <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div>
-                <h3 class="text-2xl font-bold mb-4">SmartGrocery</h3>
-                <p class="text-white opacity-80 mb-4">Revolutionizing grocery shopping with smart technology and fresh, quality products.</p>
-                <div class="flex space-x-4">
-                    <a href="#" class="text-white hover:text-[#FF6B6B]"><i class="fab fa-twitter text-xl"></i></a>
-                    <a href="#" class="text-white hover:text-[#FF6B6B]"><i class="fab fa-instagram text-xl"></i></a>
-                    <a href="https://www.linkedin.com/in/manar-bouallaga-674783269/" class="text-white hover:text-[#FF6B6B]"><i class="fab fa-linkedin text-xl"></i></a>
-                </div>
-            </div>
-            <div>
-                <h4 class="font-semibold mb-4 text-white">Quick Links</h4>
-                <ul class="space-y-2">
-                    <li><a href="index.html" class="text-white opacity-80 hover:opacity-100">Home</a></li>
-                    <li><a href="shop.html" class="text-white opacity-80 hover:opacity-100">Shop</a></li>
-                    <li><a href="categories.html" class="text-white opacity-80 hover:opacity-100">Categories</a></li>
-                    <li><a href="about.html" class="text-white opacity-80 hover:opacity-100">About</a></li>
-                </ul>
-            </div>
-            <div>
-                <h4 class="font-semibold mb-4 text-white">Support</h4>
-                <ul class="space-y-2">
-                    <li><a href="#" class="text-white opacity-80 hover:opacity-100">Help Center</a></li>
-                    <li><a href="#" class="text-white opacity-80 hover:opacity-100">Shipping</a></li>
-                    <li><a href="#" class="text-white opacity-80 hover:opacity-100">Returns</a></li>
-                    <li><a href="#" class="text-white opacity-80 hover:opacity-100">Contact</a></li>
-                </ul>
-            </div>
-            <div>
-                <h4 class="font-semibold mb-4 text-white">Newsletter</h4>
-                <p class="text-white opacity-80 mb-4">Stay updated with our latest offers and products.</p>
-                <div class="flex">
-                    <input type="email" placeholder="Your email" class="px-4 py-2 rounded-l-full w-full text-gray-800">
-                    <button class="bg-[#FF6B6B] text-white px-4 rounded-r-full hover:bg-[#FF5252]">
-                        Subscribe
-                    </button>
-                </div>
-            </div>
-        </div>
-        <div class="container mx-auto px-4 mt-8 text-center border-t border-[#0A4F51] pt-4">
-            <p class="text-white opacity-60">&copy; 2024 SmartGrocery. All Rights Reserved.</p>
-        </div>
-    </footer>
-
     <script src="script.js"></script>
 </body>
 </html>
