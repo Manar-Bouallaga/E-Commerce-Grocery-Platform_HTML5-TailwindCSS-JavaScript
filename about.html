@@ -5,16 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About - FreshGrocer</title>
     <script src="https://cdn.tailwindcss.com"></script>
-<link rel="icon" href="Code&Grow.png" type="image/x-icon">
+    <link rel="icon" href="Code&Grow.png" type="image/x-icon">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         body {
-            background-color: #F5F7F8;
+            background-color: #F8FAFC;
             color: #333333;
-            overflow-x: hidden;
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
         }
         .custom-gradient {
             background: linear-gradient(135deg, #0F7173 0%, #0A4F51 100%);
+        }
+        .team-card {
+            transition: all 0.3s ease;
+        }
+        .team-card:hover {
+            transform: translateY(-5px);
+        }
+        .value-card {
+            transition: all 0.3s ease;
+        }
+        .value-card:hover {
+            transform: translateY(-5px);
         }
         @keyframes fadeInUp {
             from {
@@ -51,15 +63,55 @@
         .animate-wiggle {
             animation: wiggle 0.5s ease-in-out;
         }
+        .cart-btn-effect:hover {
+            box-shadow: 0 0 15px rgba(15, 113, 115, 0.5);
+        }
+        .timeline-container {
+            position: relative;
+        }
+        .timeline-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 100%;
+            background-color: #0F7173;
+        }
+        .timeline-item {
+            position: relative;
+            margin-bottom: 2rem;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background-color: #0F7173;
+        }
+        @media (max-width: 768px) {
+            .timeline-container::before {
+                left: 20px;
+            }
+            .timeline-item::before {
+                left: 20px;
+            }
+        }
     </style>
 </head>
 <body>
+    <!-- Navigation -->
     <nav class="bg-white shadow-lg fixed top-0 left-0 right-0 z-50">
         <div class="container mx-auto px-4 py-4 flex flex-wrap justify-between items-center">
             <a href="index.html" class="text-2xl md:text-3xl font-bold text-[#0F7173] transform transition-all duration-300 hover:scale-105">FreshGrocer</a>
             
             <div class="md:hidden">
-                <button id="mobile-menu-toggle" class="text-[#333333] hover:text-[#0F7173] focus:outline-none">
+                <button id="mobile-menu-toggle" class="text-[#333333] hover:text-[#0F7173] focus:outline-none" aria-expanded="false" aria-label="Toggle navigation">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
                     </svg>
@@ -76,10 +128,16 @@
                     <a href="index.html" class="text-[#333333] hover:text-[#0F7173] transition-colors">Home</a>
                     <a href="shop.html" class="text-[#333333] hover:text-[#0F7173] transition-colors">Shop</a>
                     <a href="categories.html" class="text-[#333333] hover:text-[#0F7173] transition-colors">Categories</a>
-                    <a href="about.html" class="text-[#333333] hover:text-[#0F7173] transition-colors">About</a>
+                    <a href="about.html" class="text-[#0F7173] font-medium border-b-2 border-[#0F7173] pb-1 transition-colors">About</a>
                 </div>
 
-                <div class="mt-4 md:mt-0 md:ml-4">
+                <div class="mt-4 md:mt-0 md:ml-4 flex items-center space-x-4">
+                    <button class="text-[#333333] hover:text-[#0F7173] transition-all duration-300">
+                        <i class="fas fa-search text-xl"></i>
+                    </button>
+                    <button class="text-[#333333] hover:text-[#0F7173] transition-all duration-300">
+                        <i class="fas fa-user text-xl"></i>
+                    </button>
                     <button id="cart-btn" class="relative text-[#333333] hover:text-[#0F7173] transition-all duration-300 group">
                         <i class="fas fa-shopping-cart text-xl"></i>
                         <span id="cart-count" class="absolute -top-3 -right-3 bg-[#FF6B6B] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">0</span>
@@ -89,85 +147,304 @@
         </div>
     </nav>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
-            const navMenu = document.getElementById('nav-menu');
+    <div class="pt-20"></div>
 
-            mobileMenuToggle.addEventListener('click', () => {
-                navMenu.classList.toggle('hidden');
-                mobileMenuToggle.setAttribute('aria-expanded', 
-                    mobileMenuToggle.getAttribute('aria-expanded') === 'true' ? 'false' : 'true'
-                );
-            });
-
-            document.addEventListener('click', (event) => {
-                if (!navMenu.contains(event.target) && !mobileMenuToggle.contains(event.target)) {
-                    navMenu.classList.add('hidden');
-                    mobileMenuToggle.setAttribute('aria-expanded', 'false');
-                }
-            });
-        });
-    </script>
-
-    <br><br>
-
-    <header class="custom-gradient text-white py-24">
+    <!-- Hero Section -->
+    <header class="custom-gradient text-white py-16 md:py-20">
         <div class="container mx-auto px-4 text-center">
-            <h1 class="text-5xl font-bold mb-6">About FreshGrocer</h1>
-            <p class="text-xl opacity-80">Transforming grocery shopping through technology and quality</p>
+            <h1 class="text-4xl md:text-5xl font-bold mb-4">About FreshGrocer</h1>
+            <p class="text-lg md:text-xl opacity-90 max-w-2xl mx-auto">Transforming grocery shopping through technology and quality</p>
         </div>
     </header>
 
+    <!-- Main Content -->
     <main class="container mx-auto px-4 py-12 md:py-16">
-        <section class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center about-section">
-            <div class="text-center md:text-left">
-                <h2 class="text-3xl md:text-4xl font-bold text-[#0F7173] mb-4 md:mb-6">Our Mission</h2>
-                <p class="text-base md:text-lg text-gray-700 mb-4 md:mb-6">At FreshGrocer, we're reimagining grocery shopping for the digital age. Our mission is to deliver fresh, high-quality products directly to your doorstep with unparalleled convenience and precision.</p>
+        <!-- Breadcrumbs -->
+        <div class="text-sm text-gray-500 mb-8">
+            <a href="index.html" class="hover:text-[#0F7173]">Home</a> 
+            <span class="mx-2">/</span> 
+            <span class="text-[#0F7173] font-medium">About</span>
+        </div>
+
+        <!-- Our Story Section -->
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center mb-16 about-section">
+            <div class="text-center md:text-left animate-fade-in-up">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4 md:mb-6">Our Story</h2>
+                <p class="text-base md:text-lg text-gray-700 mb-4 md:mb-6">FreshGrocer was founded in 2018 with a simple mission: to make fresh, high-quality groceries accessible to everyone. What started as a small local delivery service has grown into a comprehensive platform connecting consumers with the best produce and products from trusted suppliers.</p>
+                <p class="text-base md:text-lg text-gray-700 mb-4 md:mb-6">Our team of passionate food enthusiasts and tech innovators work together to create a seamless grocery shopping experience that prioritizes quality, convenience, and sustainability.</p>
                 <div class="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">
                     <div class="bg-[#0F7173] text-white p-4 rounded-lg text-center">
-                        <h3 class="text-xl font-semibold">Quality</h3>
-                        <p class="text-sm">Handpicked, premium products</p>
+                        <h3 class="text-xl font-semibold">5+ Years</h3>
+                        <p class="text-sm">Of Excellence</p>
                     </div>
                     <div class="bg-[#FF6B6B] text-white p-4 rounded-lg text-center">
-                        <h3 class="text-xl font-semibold">Convenience</h3>
-                        <p class="text-sm">Delivered to your doorstep</p>
+                        <h3 class="text-xl font-semibold">100K+</h3>
+                        <p class="text-sm">Happy Customers</p>
+                    </div>
+                    <div class="bg-[#0F7173] text-white p-4 rounded-lg text-center">
+                        <h3 class="text-xl font-semibold">50+</h3>
+                        <p class="text-sm">Local Partners</p>
                     </div>
                 </div>
             </div>
-            <div class="flex justify-center md:justify-end">
-                <img src="FreshGrocer Team.jpg" alt="FreshGrocer Team" class="rounded-full shadow-2xl team-member w-2/3 md:w-full">
+            <div class="flex justify-center md:justify-end animate-fade-in-up" style="animation-delay: 0.3s;">
+                <img src="/placeholder.svg?height=400&width=500" alt="FreshGrocer Team" class="rounded-lg shadow-2xl w-full md:w-5/6">
             </div>
         </section>
 
-        <section class="mt-12 md:mt-16 text-center about-section">
-            <h2 class="text-3xl md:text-4xl font-bold text-[#0F7173] mb-8 md:mb-12">Our Core Values</h2>
+        <!-- Our Mission Section -->
+        <section class="bg-white rounded-lg shadow-md p-8 md:p-12 mb-16 about-section animate-fade-in-up" style="animation-delay: 0.5s;">
+            <div class="text-center max-w-3xl mx-auto">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-6">Our Mission</h2>
+                <p class="text-xl text-gray-700 mb-8">At FreshGrocer, we're reimagining grocery shopping for the digital age. Our mission is to deliver fresh, high-quality products directly to your doorstep with unparalleled convenience and precision.</p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="p-4">
+                        <div class="bg-[#0F7173] text-white rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-leaf text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2">Quality</h3>
+                        <p class="text-gray-600">We source only the freshest, highest-quality products from trusted suppliers and local farms.</p>
+                    </div>
+                    <div class="p-4">
+                        <div class="bg-[#0F7173] text-white rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-truck-fast text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2">Convenience</h3>
+                        <p class="text-gray-600">We make grocery shopping effortless with our user-friendly platform and reliable delivery service.</p>
+                    </div>
+                    <div class="p-4">
+                        <div class="bg-[#0F7173] text-white rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-seedling text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2">Sustainability</h3>
+                        <p class="text-gray-600">We're committed to eco-friendly practices and supporting sustainable agriculture.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Our Values Section -->
+        <section class="mb-16 about-section animate-fade-in-up" style="animation-delay: 0.7s;">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-800 text-center mb-12">Our Core Values</h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-                <div class="bg-white rounded-lg shadow-md p-6 md:p-8 hover:shadow-xl transition">
-                    <div class="bg-[#0F7173] text-white rounded-full w-16 md:w-24 h-16 md:h-24 flex items-center justify-center mx-auto mb-4 md:mb-6">
-                        <i class="fas fa-leaf text-2xl md:text-4xl"></i>
+                <div class="value-card bg-white rounded-lg shadow-md p-6 md:p-8 hover:shadow-xl transition">
+                    <div class="bg-[#0F7173] text-white rounded-full w-16 md:w-20 h-16 md:h-20 flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-heart text-2xl md:text-3xl"></i>
                     </div>
-                    <h3 class="text-lg md:text-xl font-semibold mb-2 md:mb-4">Sustainability</h3>
-                    <p class="text-sm md:text-base text-gray-600">Committed to eco-friendly practices</p>
+                    <h3 class="text-xl font-semibold mb-4 text-center">Customer First</h3>
+                    <p class="text-gray-600">We prioritize our customers' needs and satisfaction in everything we do. Your happiness is our success.</p>
                 </div>
-                <div class="bg-white rounded-lg shadow-md p-6 md:p-8 hover:shadow-xl transition">
-                    <div class="bg-[#0F7173] text-white rounded-full w-16 md:w-24 h-16 md:h-24 flex items-center justify-center mx-auto mb-4 md:mb-6">
-                        <i class="fas fa-truck text-2xl md:text-4xl"></i>
+                <div class="value-card bg-white rounded-lg shadow-md p-6 md:p-8 hover:shadow-xl transition">
+                    <div class="bg-[#0F7173] text-white rounded-full w-16 md:w-20 h-16 md:h-20 flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-handshake text-2xl md:text-3xl"></i>
                     </div>
-                    <h3 class="text-lg md:text-xl font-semibold mb-2 md:mb-4">Convenience</h3>
-                    <p class="text-sm md:text-base text-gray-600">Streamlined shopping experience with fast, reliable delivery.</p>
+                    <h3 class="text-xl font-semibold mb-4 text-center">Integrity</h3>
+                    <p class="text-gray-600">We operate with honesty, transparency, and ethical standards. We stand behind every product we sell.</p>
                 </div>
-                <div class="bg-white rounded-lg shadow-md p-6 md:p-8 hover:shadow-xl transition">
-                    <div class="bg-[#0F7173] text-white rounded-full w-16 md:w-24 h-16 md:h-24 flex items-center justify-center mx-auto mb-4 md:mb-6">
-                        <i class="fas fa-shield-alt text-2xl md:text-4xl"></i>
+                <div class="value-card bg-white rounded-lg shadow-md p-6 md:p-8 hover:shadow-xl transition">
+                    <div class="bg-[#0F7173] text-white rounded-full w-16 md:w-20 h-16 md:h-20 flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-lightbulb text-2xl md:text-3xl"></i>
                     </div>
-                    <h3 class="text-lg md:text-xl font-semibold mb-2 md:mb-4">Quality</h3>
-                    <p class="text-sm md:text-base text-gray-600">Rigorous selection process ensuring the highest quality products.</p>
+                    <h3 class="text-xl font-semibold mb-4 text-center">Innovation</h3>
+                    <p class="text-gray-600">We continuously seek new ways to improve our service and enhance the grocery shopping experience.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Our Journey Timeline -->
+        <section class="mb-16 about-section animate-fade-in-up" style="animation-delay: 0.9s;">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-800 text-center mb-12">Our Journey</h2>
+            <div class="timeline-container py-8">
+                <div class="timeline-item flex flex-col md:flex-row">
+                    <div class="md:w-1/2 md:pr-12 md:text-right mb-8 md:mb-0">
+                        <div class="bg-white rounded-lg shadow-md p-6">
+                            <h3 class="text-xl font-semibold text-[#0F7173] mb-2">2018</h3>
+                            <h4 class="text-lg font-medium mb-2">The Beginning</h4>
+                            <p class="text-gray-600">FreshGrocer was founded with a small team of 5 people serving one neighborhood.</p>
+                        </div>
+                    </div>
+                    <div class="md:w-1/2 md:pl-12 hidden md:block"></div>
+                </div>
+                <div class="timeline-item flex flex-col md:flex-row mt-16">
+                    <div class="md:w-1/2 md:pr-12 hidden md:block"></div>
+                    <div class="md:w-1/2 md:pl-12">
+                        <div class="bg-white rounded-lg shadow-md p-6">
+                            <h3 class="text-xl font-semibold text-[#0F7173] mb-2">2020</h3>
+                            <h4 class="text-lg font-medium mb-2">Expansion</h4>
+                            <p class="text-gray-600">Expanded to serve 10 cities and launched our mobile app for easier ordering.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="timeline-item flex flex-col md:flex-row mt-16">
+                    <div class="md:w-1/2 md:pr-12 md:text-right mb-8 md:mb-0">
+                        <div class="bg-white rounded-lg shadow-md p-6">
+                            <h3 class="text-xl font-semibold text-[#0F7173] mb-2">2022</h3>
+                            <h4 class="text-lg font-medium mb-2">Sustainability Initiative</h4>
+                            <p class="text-gray-600">Launched our eco-friendly packaging and carbon-neutral delivery program.</p>
+                        </div>
+                    </div>
+                    <div class="md:w-1/2 md:pl-12 hidden md:block"></div>
+                </div>
+                <div class="timeline-item flex flex-col md:flex-row mt-16">
+                    <div class="md:w-1/2 md:pr-12 hidden md:block"></div>
+                    <div class="md:w-1/2 md:pl-12">
+                        <div class="bg-white rounded-lg shadow-md p-6">
+                            <h3 class="text-xl font-semibold text-[#0F7173] mb-2">2024</h3>
+                            <h4 class="text-lg font-medium mb-2">Today</h4>
+                            <p class="text-gray-600">Serving over 100,000 customers across 30 cities with a team of 200+ dedicated employees.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Our Team Section -->
+        <section class="mb-16 about-section animate-fade-in-up" style="animation-delay: 1.1s;">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-800 text-center mb-12">Meet Our Team</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+                <div class="team-card bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition">
+                    <img src="/placeholder.svg?height=300&width=300" alt="Team Member" class="w-full h-64 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold mb-1">Sarah Johnson</h3>
+                        <p class="text-[#0F7173] font-medium mb-3">CEO & Founder</p>
+                        <p class="text-gray-600 mb-4">With over 15 years in the food industry, Sarah leads our vision for fresh, accessible groceries.</p>
+                        <div class="flex space-x-3">
+                            <a href="#" class="text-gray-400 hover:text-[#0F7173]">
+                                <i class="fab fa-linkedin"></i>
+                            </a>
+                            <a href="#" class="text-gray-400 hover:text-[#0F7173]">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="team-card bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition">
+                    <img src="/placeholder.svg?height=300&width=300" alt="Team Member" class="w-full h-64 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold mb-1">Michael Chen</h3>
+                        <p class="text-[#0F7173] font-medium mb-3">CTO</p>
+                        <p class="text-gray-600 mb-4">Michael leads our tech team, creating innovative solutions for a seamless shopping experience.</p>
+                        <div class="flex space-x-3">
+                            <a href="#" class="text-gray-400 hover:text-[#0F7173]">
+                                <i class="fab fa-linkedin"></i>
+                            </a>
+                            <a href="#" class="text-gray-400 hover:text-[#0F7173]">
+                                <i class="fab fa-github"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="team-card bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition">
+                    <img src="/placeholder.svg?height=300&width=300" alt="Team Member" class="w-full h-64 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold mb-1">Emily Rodriguez</h3>
+                        <p class="text-[#0F7173] font-medium mb-3">Head of Operations</p>
+                        <p class="text-gray-600 mb-4">Emily ensures our operations run smoothly, from sourcing to delivery, with precision and care.</p>
+                        <div class="flex space-x-3">
+                            <a href="#" class="text-gray-400 hover:text-[#0F7173]">
+                                <i class="fab fa-linkedin"></i>
+                            </a>
+                            <a href="#" class="text-gray-400 hover:text-[#0F7173]">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="team-card bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition">
+                    <img src="/placeholder.svg?height=300&width=300" alt="Team Member" class="w-full h-64 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold mb-1">David Kim</h3>
+                        <p class="text-[#0F7173] font-medium mb-3">Head of Sourcing</p>
+                        <p class="text-gray-600 mb-4">David works with local farmers and suppliers to bring you the freshest, highest-quality products.</p>
+                        <div class="flex space-x-3">
+                            <a href="#" class="text-gray-400 hover:text-[#0F7173]">
+                                <i class="fab fa-linkedin"></i>
+                            </a>
+                            <a href="#" class="text-gray-400 hover:text-[#0F7173]">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section class="bg-white rounded-lg shadow-md p-8 md:p-12 about-section animate-fade-in-up" style="animation-delay: 1.3s;">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div>
+                    <h2 class="text-3xl font-bold text-gray-800 mb-6">Get In Touch</h2>
+                    <p class="text-gray-600 mb-6">Have questions or feedback? We'd love to hear from you. Reach out to our team using the contact form or through the information below.</p>
+                    <div class="space-y-4">
+                        <div class="flex items-start">
+                            <div class="bg-[#0F7173] text-white rounded-full w-10 h-10 flex items-center justify-center mr-4 mt-1">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-gray-800">Address</h3>
+                                <p class="text-gray-600">123 Fresh Street, Grocery City, FC 12345</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="bg-[#0F7173] text-white rounded-full w-10 h-10 flex items-center justify-center mr-4 mt-1">
+                                <i class="fas fa-phone"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-gray-800">Phone</h3>
+                                <p class="text-gray-600">(123) 456-7890</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="bg-[#0F7173] text-white rounded-full w-10 h-10 flex items-center justify-center mr-4 mt-1">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-gray-800">Email</h3>
+                                <p class="text-gray-600">info@freshgrocer.com</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <form class="space-y-4">
+                        <div>
+                            <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                            <input type="text" id="name" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#0F7173]">
+                        </div>
+                        <div>
+                            <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                            <input type="email" id="email" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#0F7173]">
+                        </div>
+                        <div>
+                            <label for="subject" class="block text-sm font-medium text-gray-700 mb-1">Subject</label>
+                            <input type="text" id="subject" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#0F7173]">
+                        </div>
+                        <div>
+                            <label for="message" class="block text-sm font-medium text-gray-700 mb-1">Message</label>
+                            <textarea id="message" rows="4" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#0F7173]"></textarea>
+                        </div>
+                        <button type="submit" class="bg-[#0F7173] text-white px-6 py-3 rounded-lg hover:bg-[#0A4F51] transition-colors">Send Message</button>
+                    </form>
                 </div>
             </div>
         </section>
     </main>
 
+    <!-- Newsletter Section -->
+    <section class="py-12 md:py-16 bg-gray-50">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-4">Join Our Newsletter</h2>
+            <p class="text-gray-600 mb-6 max-w-xl mx-auto">Stay updated with our latest products, special offers, and healthy recipes delivered straight to your inbox.</p>
+            <div class="max-w-md mx-auto flex">
+                <input type="email" placeholder="Your email address" class="flex-1 px-4 py-3 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-[#0F7173]">
+                <button class="bg-[#0F7173] text-white px-6 py-3 rounded-r-lg hover:bg-[#0A4F51] transition-colors">
+                    Subscribe
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Cart Modal -->
     <div id="cart-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4">
         <div class="bg-white rounded-lg w-full md:w-3/4 lg:w-1/2 max-h-[90vh] overflow-y-auto p-4 md:p-8 relative">
             <div class="flex justify-between items-center mb-4 md:mb-6">
@@ -187,7 +464,7 @@
                     <span class="text-xl md:text-2xl font-semibold">
                         Total: $<span id="cart-total">0</span>
                     </span>
-                    <button class="w-full md:w-auto bg-[#0F7173] text-white px-6 py-2 md:py-3 rounded-full hover:bg-[#0A4F51] transition-colors">
+                    <button class="w-full md:w-auto bg-[#0F7173] text-white px-6 py-2 md:py-3 rounded-full hover:bg-[#0A4F51] transition-colors cart-btn-effect">
                         Proceed to Checkout
                     </button>
                 </div>
@@ -195,14 +472,83 @@
         </div>
     </div>
 
+    <!-- Footer -->
+    <footer class="bg-[#0F7173] text-white py-12 md:py-16">
+        <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div>
+                <h3 class="text-2xl font-bold mb-4">FreshGrocer</h3>
+                <p class="text-white opacity-80 mb-4">Revolutionizing grocery shopping with smart technology and fresh, quality products.</p>
+                <div class="flex space-x-4">
+                    <a href="#" class="text-white hover:text-[#FF6B6B] transition-colors">
+                        <i class="fab fa-twitter text-xl"></i>
+                    </a>
+                    <a href="#" class="text-white hover:text-[#FF6B6B] transition-colors">
+                        <i class="fab fa-instagram text-xl"></i>
+                    </a>
+                    <a href="https://www.linkedin.com/in/manar-bouallaga-674783269/" class="text-white hover:text-[#FF6B6B] transition-colors">
+                        <i class="fab fa-linkedin text-xl"></i>
+                    </a>
+                </div>
+            </div>
+            <div>
+                <h4 class="font-semibold mb-4 text-white">Quick Links</h4>
+                <ul class="space-y-2">
+                    <li><a href="index.html" class="text-white opacity-80 hover:opacity-100 transition-opacity">Home</a></li>
+                    <li><a href="shop.html" class="text-white opacity-80 hover:opacity-100 transition-opacity">Shop</a></li>
+                    <li><a href="categories.html" class="text-white opacity-80 hover:opacity-100 transition-opacity">Categories</a></li>
+                    <li><a href="about.html" class="text-white opacity-80 hover:opacity-100 transition-opacity">About</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-semibold mb-4 text-white">Support</h4>
+                <ul class="space-y-2">
+                    <li><a href="#" class="text-white opacity-80 hover:opacity-100 transition-opacity">Help Center</a></li>
+                    <li><a href="#" class="text-white opacity-80 hover:opacity-100 transition-opacity">Shipping</a></li>
+                    <li><a href="#" class="text-white opacity-80 hover:opacity-100 transition-opacity">Returns</a></li>
+                    <li><a href="#" class="text-white opacity-80 hover:opacity-100 transition-opacity">Contact</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-semibold mb-4 text-white">Newsletter</h4>
+                <p class="text-white opacity-80 mb-4">Stay updated with our latest offers and products.</p>
+                <div class="flex">
+                    <input type="email" placeholder="Your email" class="px-4 py-2 rounded-l-full w-full text-gray-800 focus:outline-none">
+                    <button class="bg-[#FF6B6B] text-white px-4 rounded-r-full hover:bg-[#FF5252] transition-colors">
+                        Subscribe
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="container mx-auto px-4 mt-8 text-center border-t border-[#0A4F51] pt-4">
+            <p class="text-white opacity-60">&copy; 2024 FreshGrocer. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // Mobile menu toggle
+            const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+            const navMenu = document.getElementById('nav-menu');
+
+            mobileMenuToggle.addEventListener('click', () => {
+                navMenu.classList.toggle('hidden');
+                mobileMenuToggle.setAttribute('aria-expanded', 
+                    mobileMenuToggle.getAttribute('aria-expanded') === 'true' ? 'false' : 'true'
+                );
+            });
+
+            document.addEventListener('click', (event) => {
+                if (!navMenu.contains(event.target) && !mobileMenuToggle.contains(event.target)) {
+                    navMenu.classList.add('hidden');
+                    mobileMenuToggle.setAttribute('aria-expanded', 'false');
+                }
+            });
+
+            // Cart modal functionality
             const cartModal = document.getElementById('cart-modal');
             const cartBtn = document.getElementById('cart-btn');
             const closeCartBtn = document.getElementById('close-cart');
-            const cartItems = document.getElementById('cart-items');
-            const cartTotal = document.getElementById('cart-total');
-            const emptyCartMessage = document.getElementById('empty-cart-message');
 
             cartBtn.addEventListener('click', () => {
                 cartModal.classList.remove('hidden');
@@ -235,84 +581,38 @@
             }
 
             handleResponsiveCart();
-
             window.addEventListener('resize', handleResponsiveCart);
-        });
-    </script>
 
-    <footer class="bg-[#0F7173] text-white py-12 md:py-16">
-        <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div>
-                <h3 class="text-2xl font-bold mb-4">FreshGrocer</h3>
-                <p class="text-white opacity-80 mb-4">Revolutionizing grocery shopping with smart technology and fresh, quality products.</p>
-                <div class="flex space-x-4">
-                    <a href="#" class="text-white hover:text-[#FF6B6B]"><i class="fab fa-twitter text-xl"></i></a>
-                    <a href="#" class="text-white hover:text-[#FF6B6B]"><i class="fab fa-instagram text-xl"></i></a>
-                    <a href="https://www.linkedin.com/in/manar-bouallaga-674783269/" class="text-white hover:text-[#FF6B6B]"><i class="fab fa-linkedin text-xl"></i></a>
-                </div>
-            </div>
-            <div>
-                <h4 class="font-semibold mb-4 text-white">Quick Links</h4>
-                <ul class="space-y-2">
-                    <li><a href="index.html" class="text-white opacity-80 hover:opacity-100">Home</a></li>
-                    <li><a href="shop.html" class="text-white opacity-80 hover:opacity-100">Shop</a></li>
-                    <li><a href="categories.html" class="text-white opacity-80 hover:opacity-100">Categories</a></li>
-                    <li><a href="about.html" class="text-white opacity-80 hover:opacity-100">About</a></li>
-                </ul>
-            </div>
-            <div>
-                <h4 class="font-semibold mb-4 text-white">Support</h4>
-                <ul class="space-y-2">
-                    <li><a href="#" class="text-white opacity-80 hover:opacity-100">Help Center</a></li>
-                    <li><a href="#" class="text-white opacity-80 hover:opacity-100">Shipping</a></li>
-                    <li><a href="#" class="text-white opacity-80 hover:opacity-100">Returns</a></li>
-                    <li><a href="#" class="text-white opacity-80 hover:opacity-100">Contact</a></li>
-                </ul>
-            </div>
-            <div>
-                <h4 class="font-semibold mb-4 text-white">Newsletter</h4>
-                <p class="text-white opacity-80 mb-4">Stay updated with our latest offers and products.</p>
-                <div class="flex">
-                    <input type="email" placeholder="Your email" class="px-4 py-2 rounded-l-full w-full text-gray-800">
-                    <button class="bg-[#FF6B6B] text-white px-4 rounded-r-full hover:bg-[#FF5252]">
-                        Subscribe
-                    </button>
-                </div>
-            </div>
-        </div>
-        <div class="container mx-auto px-4 mt-8 text-center border-t border-[#0A4F51] pt-4">
-            <p class="text-white opacity-60">&copy; 2024 FreshGrocer. All Rights Reserved.</p>
-        </div>
-    </footer>
-
-    <script>
-      
-
-        const aboutSections = document.querySelectorAll('.about-section');
-        aboutSections.forEach((section, index) => {
-            section.style.animationDelay = `${index * 0.3}s`;
-            section.classList.add('animate-fade-in-up');
-        });
-
-        const teamMembers = document.querySelectorAll('.team-member');
-        teamMembers.forEach(member => {
-            member.addEventListener('mouseenter', () => {
-                member.classList.add('animate-pulse');
+            // Animation for about sections
+            const aboutSections = document.querySelectorAll('.about-section');
+            aboutSections.forEach((section) => {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('animate-fade-in-up');
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.1 });
+                
+                observer.observe(section);
             });
-            member.addEventListener('mouseleave', () => {
-                member.classList.remove('animate-pulse');
+
+            // Animation for team cards
+            const teamCards = document.querySelectorAll('.team-card');
+            teamCards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.1}s`;
+                card.classList.add('animate-fade-in-up');
+            });
+
+            // Animation for value cards
+            const valueCards = document.querySelectorAll('.value-card');
+            valueCards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.1}s`;
+                card.classList.add('animate-fade-in-up');
             });
         });
-
-        const cartBtn = document.getElementById('cart-btn');
-        cartBtn.addEventListener('click', () => {
-            cartBtn.classList.add('animate-wiggle');
-            setTimeout(() => {
-                cartBtn.classList.remove('animate-wiggle');
-            }, 500);
-        });
     </script>
-        <script src="script.js"></script>
-
+    <script src="script.js"></script>
 </body>
 </html>
