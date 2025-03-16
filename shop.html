@@ -5,16 +5,52 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shop - FreshGrocer</title>
     <script src="https://cdn.tailwindcss.com"></script>
-<link rel="icon" href="Code&Grow.png" type="image/x-icon">  
+    <link rel="icon" href="Code&Grow.png" type="image/x-icon">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         body {
-            background-color: #F5F7F8;
+            background-color: #F8FAFC;
             color: #333333;
-            overflow-x: hidden;
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
         }
         .custom-gradient {
             background: linear-gradient(135deg, #0F7173 0%, #0A4F51 100%);
+        }
+        .product-card {
+            transition: all 0.3s ease;
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+        }
+        .badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            z-index: 10;
+        }
+        .badge-new {
+            background-color: #0F7173;
+            color: white;
+        }
+        .badge-sale {
+            background-color: #FF6B6B;
+            color: white;
+        }
+        .filter-pill {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .filter-pill:hover {
+            background-color: #0F7173;
+            color: white;
+        }
+        .filter-pill.active {
+            background-color: #0F7173;
+            color: white;
         }
         @keyframes fadeInUp {
             from {
@@ -51,15 +87,44 @@
         .animate-wiggle {
             animation: wiggle 0.5s ease-in-out;
         }
+        .cart-btn-effect:hover {
+            box-shadow: 0 0 15px rgba(15, 113, 115, 0.5);
+        }
+        /* Custom range slider styling */
+        .price-slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 6px;
+            border-radius: 5px;
+            background: #e0e0e0;
+            outline: none;
+        }
+        .price-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #0F7173;
+            cursor: pointer;
+        }
+        .price-slider::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #0F7173;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
+    <!-- Navigation -->
     <nav class="bg-white shadow-lg fixed top-0 left-0 right-0 z-50">
         <div class="container mx-auto px-4 py-4 flex flex-wrap justify-between items-center">
             <a href="index.html" class="text-2xl md:text-3xl font-bold text-[#0F7173] transform transition-all duration-300 hover:scale-105">FreshGrocer</a>
             
             <div class="md:hidden">
-                <button id="mobile-menu-toggle" class="text-[#333333] hover:text-[#0F7173] focus:outline-none">
+                <button id="mobile-menu-toggle" class="text-[#333333] hover:text-[#0F7173] focus:outline-none" aria-expanded="false" aria-label="Toggle navigation">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
                     </svg>
@@ -74,12 +139,18 @@
                 hidden md:block">
                 <div class="flex flex-col md:flex-row items-start md:items-center space-y-2 md:space-y-0 md:space-x-6">
                     <a href="index.html" class="text-[#333333] hover:text-[#0F7173] transition-colors">Home</a>
-                    <a href="shop.html" class="text-[#333333] hover:text-[#0F7173] transition-colors">Shop</a>
+                    <a href="shop.html" class="text-[#0F7173] font-medium border-b-2 border-[#0F7173] pb-1 transition-colors">Shop</a>
                     <a href="categories.html" class="text-[#333333] hover:text-[#0F7173] transition-colors">Categories</a>
                     <a href="about.html" class="text-[#333333] hover:text-[#0F7173] transition-colors">About</a>
                 </div>
 
-                <div class="mt-4 md:mt-0 md:ml-4">
+                <div class="mt-4 md:mt-0 md:ml-4 flex items-center space-x-4">
+                    <button class="text-[#333333] hover:text-[#0F7173] transition-all duration-300">
+                        <i class="fas fa-search text-xl"></i>
+                    </button>
+                    <button class="text-[#333333] hover:text-[#0F7173] transition-all duration-300">
+                        <i class="fas fa-user text-xl"></i>
+                    </button>
                     <button id="cart-btn" class="relative text-[#333333] hover:text-[#0F7173] transition-all duration-300 group">
                         <i class="fas fa-shopping-cart text-xl"></i>
                         <span id="cart-count" class="absolute -top-3 -right-3 bg-[#FF6B6B] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">0</span>
@@ -89,69 +160,317 @@
         </div>
     </nav>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
-            const navMenu = document.getElementById('nav-menu');
+    <div class="pt-20"></div>
 
-            mobileMenuToggle.addEventListener('click', () => {
-                navMenu.classList.toggle('hidden');
-                mobileMenuToggle.setAttribute('aria-expanded', 
-                    mobileMenuToggle.getAttribute('aria-expanded') === 'true' ? 'false' : 'true'
-                );
-            });
-
-            document.addEventListener('click', (event) => {
-                if (!navMenu.contains(event.target) && !mobileMenuToggle.contains(event.target)) {
-                    navMenu.classList.add('hidden');
-                    mobileMenuToggle.setAttribute('aria-expanded', 'false');
-                }
-            });
-        });
-    </script>
-
-    <br><br>
-
-    <header class="custom-gradient text-white py-24">
-        <div class="container mx-auto px-4 text-center">
-            <h1 class="text-5xl font-bold mb-6">Our Product Selection</h1>
-            <p class="text-xl opacity-80">Discover fresh, high-quality groceries curated for your lifestyle</p>
+    <!-- Hero Section -->
+    <header class="custom-gradient text-white py-12 md:py-16">
+        <div class="container mx-auto px-4">
+            <div class="max-w-4xl mx-auto text-center">
+                <h1 class="text-3xl md:text-4xl font-bold mb-4">Fresh Groceries, Delivered to Your Door</h1>
+                <p class="text-lg opacity-90 mb-8">Browse our selection of premium, fresh products</p>
+                <div class="relative">
+                    <input id="hero-search" type="text" placeholder="Search for products..." class="w-full px-5 py-3 rounded-full text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#0F7173]">
+                    <button class="absolute right-3 top-3 text-gray-400 hover:text-[#0F7173]">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
         </div>
     </header>
 
-    <main class="container mx-auto px-4 py-16">
-        <section class="container mx-auto px-4 py-8">
-            <div class="flex flex-row justify-between items-center mb-8 gap-4">
-                <div class="flex flex-row space-x-4 sm:space-x-1  sm:flex-row sm:w-full">
-                    <select id="category-filter" class="border border-gray-300 rounded-full px-4 py-2 w-full sm:w-full md:w-auto focus:outline-none focus:ring-2 focus:ring-[#0F7173]">
-                        <option value="All">All Categories</option>
-                        <option value="Fruits">Fruits</option>
-                        <option value="Vegetables">Vegetables</option>
-                        <option value="Dairy">Dairy</option>
-                        <option value="Bakery">Bakery</option>
-                        <option value="Snacks">Snacks</option>
-                        <option value="Drinks">Drinks</option>
-                    </select>
-                    <select id="price-filter" class="border border-gray-300 rounded-full px-4 py-2 w-full sm:w-full md:w-auto focus:outline-none focus:ring-2 focus:ring-[#0F7173]">
-                        <option value="All">All Prices</option>
-                        <option value="0-5">$0 - $5</option>
-                        <option value="5-10">$5 - $10</option>
-                        <option value="10+">$10+</option>
-                    </select>
-                </div>
-                <div class="relative w-full sm:w-full md:w-auto">
-                    <input type="text" id="search-input" placeholder="Search products" class="border border-gray-300 rounded-full px-4 py-2 w-full sm:w-full md:w-60 focus:outline-none focus:ring-2 focus:ring-[#0F7173]">
-                    <i class="fas fa-search absolute right-4 top-3 text-gray-400"></i>
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8 md:py-12">
+        <!-- Breadcrumbs -->
+        <div class="text-sm text-gray-500 mb-6">
+            <a href="index.html" class="hover:text-[#0F7173]">Home</a> 
+            <span class="mx-2">/</span> 
+            <span class="text-[#0F7173] font-medium">Shop</span>
+        </div>
+
+        <!-- Filter Pills -->
+        <div class="mb-8 overflow-x-auto">
+            <div class="flex space-x-2 md:space-x-4 pb-2">
+                <span class="filter-pill active px-4 py-2 bg-gray-100 rounded-full text-sm font-medium whitespace-nowrap">All</span>
+                <span class="filter-pill px-4 py-2 bg-gray-100 rounded-full text-sm font-medium whitespace-nowrap">Fruits</span>
+                <span class="filter-pill px-4 py-2 bg-gray-100 rounded-full text-sm font-medium whitespace-nowrap">Vegetables</span>
+                <span class="filter-pill px-4 py-2 bg-gray-100 rounded-full text-sm font-medium whitespace-nowrap">Dairy</span>
+                <span class="filter-pill px-4 py-2 bg-gray-100 rounded-full text-sm font-medium whitespace-nowrap">Bakery</span>
+                <span class="filter-pill px-4 py-2 bg-gray-100 rounded-full text-sm font-medium whitespace-nowrap">Snacks</span>
+                <span class="filter-pill px-4 py-2 bg-gray-100 rounded-full text-sm font-medium whitespace-nowrap">Drinks</span>
+            </div>
+        </div>
+
+        <div class="flex flex-col lg:flex-row gap-8">
+            <!-- Sidebar Filters -->
+            <div class="lg:w-1/4">
+                <div class="bg-white rounded-lg shadow-md p-6 mb-6 sticky top-24">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Filters</h2>
+                    
+                    <!-- Category Filter -->
+                    <div class="mb-6">
+                        <h3 class="font-medium text-gray-700 mb-3">Category</h3>
+                        <select id="category-filter" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#0F7173]">
+                            <option value="All">All Categories</option>
+                            <option value="Fruits">Fruits</option>
+                            <option value="Vegetables">Vegetables</option>
+                            <option value="Dairy">Dairy</option>
+                            <option value="Bakery">Bakery</option>
+                            <option value="Snacks">Snacks</option>
+                            <option value="Drinks">Drinks</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Price Filter -->
+                    <div class="mb-6">
+                        <h3 class="font-medium text-gray-700 mb-3">Price Range</h3>
+                        <select id="price-filter" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#0F7173]">
+                            <option value="All">All Prices</option>
+                            <option value="0-5">$0 - $5</option>
+                            <option value="5-10">$5 - $10</option>
+                            <option value="10+">$10+</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Rating Filter -->
+                    <div class="mb-6">
+                        <h3 class="font-medium text-gray-700 mb-3">Rating</h3>
+                        <div class="space-y-2">
+                            <label class="flex items-center">
+                                <input type="checkbox" class="form-checkbox text-[#0F7173] rounded focus:ring-[#0F7173]">
+                                <span class="ml-2 text-gray-600 flex items-center">
+                                    <i class="fas fa-star text-yellow-400"></i>
+                                    <i class="fas fa-star text-yellow-400"></i>
+                                    <i class="fas fa-star text-yellow-400"></i>
+                                    <i class="fas fa-star text-yellow-400"></i>
+                                    <i class="fas fa-star text-yellow-400"></i>
+                                </span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" class="form-checkbox text-[#0F7173] rounded focus:ring-[#0F7173]">
+                                <span class="ml-2 text-gray-600 flex items-center">
+                                    <i class="fas fa-star text-yellow-400"></i>
+                                    <i class="fas fa-star text-yellow-400"></i>
+                                    <i class="fas fa-star text-yellow-400"></i>
+                                    <i class="fas fa-star text-yellow-400"></i>
+                                    <i class="far fa-star text-yellow-400"></i>
+                                    <span class="ml-1">& Up</span>
+                                </span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" class="form-checkbox text-[#0F7173] rounded focus:ring-[#0F7173]">
+                                <span class="ml-2 text-gray-600 flex items-center">
+                                    <i class="fas fa-star text-yellow-400"></i>
+                                    <i class="fas fa-star text-yellow-400"></i>
+                                    <i class="fas fa-star text-yellow-400"></i>
+                                    <i class="far fa-star text-yellow-400"></i>
+                                    <i class="far fa-star text-yellow-400"></i>
+                                    <span class="ml-1">& Up</span>
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <!-- Special Offers -->
+                    <div class="mb-6">
+                        <h3 class="font-medium text-gray-700 mb-3">Special Offers</h3>
+                        <div class="space-y-2">
+                            <label class="flex items-center">
+                                <input type="checkbox" class="form-checkbox text-[#0F7173] rounded focus:ring-[#0F7173]">
+                                <span class="ml-2 text-gray-600">On Sale</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" class="form-checkbox text-[#0F7173] rounded focus:ring-[#0F7173]">
+                                <span class="ml-2 text-gray-600">New Arrivals</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <!-- Clear Filters Button -->
+                    <button class="w-full bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors">
+                        Clear All Filters
+                    </button>
                 </div>
             </div>
             
-            <div id="products" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
-
+            <!-- Product Grid -->
+            <div class="lg:w-3/4">
+                <!-- Sort and Search Bar -->
+                <div class="bg-white rounded-lg shadow-md p-4 mb-6 flex flex-col md:flex-row justify-between items-center">
+                    <div class="flex items-center mb-4 md:mb-0">
+                        <span class="text-gray-600 mr-2">Sort by:</span>
+                        <select class="border border-gray-300 rounded-lg px-3 py-1 focus:outline-none focus:ring-2 focus:ring-[#0F7173]">
+                            <option>Featured</option>
+                            <option>Price: Low to High</option>
+                            <option>Price: High to Low</option>
+                            <option>Rating</option>
+                            <option>Newest</option>
+                        </select>
+                    </div>
+                    <div class="flex items-center w-full md:w-auto">
+                        <div class="relative w-full md:w-auto">
+                            <input id="search-input" type="text" placeholder="Search products..." class="w-full md:w-64 border border-gray-300 rounded-lg px-3 py-1 focus:outline-none focus:ring-2 focus:ring-[#0F7173]">
+                            <button class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-[#0F7173]">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Product Count -->
+                <div class="mb-4 text-gray-600">
+                    Showing <span id="product-count">9</span> products
+                </div>
+                
+                <!-- Products Grid -->
+                <div id="products" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Products will be loaded dynamically via JavaScript -->
+                </div>
+                
+                <!-- Pagination -->
+                <div class="mt-12 flex justify-center">
+                    <nav class="inline-flex rounded-md shadow-sm">
+                        <a href="#" class="px-3 py-2 rounded-l-md border border-gray-300 bg-white text-gray-500 hover:bg-gray-50">
+                            <i class="fas fa-chevron-left"></i>
+                        </a>
+                        <a href="#" class="px-4 py-2 border-t border-b border-gray-300 bg-[#0F7173] text-white">1</a>
+                        <a href="#" class="px-4 py-2 border-t border-b border-gray-300 bg-white text-gray-700 hover:bg-gray-50">2</a>
+                        <a href="#" class="px-4 py-2 border-t border-b border-gray-300 bg-white text-gray-700 hover:bg-gray-50">3</a>
+                        <a href="#" class="px-3 py-2 rounded-r-md border border-gray-300 bg-white text-gray-500 hover:bg-gray-50">
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </nav>
+                </div>
             </div>
-        </section>
+        </div>
     </main>
-    
 
+    <!-- Mobile Filter Drawer -->
+    <div id="mobile-filter-drawer" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+        <div class="absolute right-0 top-0 bottom-0 w-4/5 max-w-sm bg-white shadow-xl p-6 overflow-y-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl font-semibold text-gray-800">Filters</h2>
+                <button id="close-filter" class="text-gray-600 hover:text-[#FF6B6B] focus:outline-none">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <!-- Mobile Category Filter -->
+            <div class="mb-6">
+                <h3 class="font-medium text-gray-700 mb-3">Category</h3>
+                <select id="category-filter-mobile" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#0F7173]">
+                    <option value="All">All Categories</option>
+                    <option value="Fruits">Fruits</option>
+                    <option value="Vegetables">Vegetables</option>
+                    <option value="Dairy">Dairy</option>
+                    <option value="Bakery">Bakery</option>
+                    <option value="Snacks">Snacks</option>
+                    <option value="Drinks">Drinks</option>
+                </select>
+            </div>
+            
+            <!-- Mobile Price Filter -->
+            <div class="mb-6">
+                <h3 class="font-medium text-gray-700 mb-3">Price Range</h3>
+                <select id="price-filter-mobile" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#0F7173]">
+                    <option value="All">All Prices</option>
+                    <option value="0-5">$0 - $5</option>
+                    <option value="5-10">$5 - $10</option>
+                    <option value="10+">$10+</option>
+                </select>
+            </div>
+            
+            <!-- Mobile Search -->
+            <div class="mb-6">
+                <h3 class="font-medium text-gray-700 mb-3">Search</h3>
+                <div class="relative">
+                    <input id="search-input-mobile" type="text" placeholder="Search products..." class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#0F7173]">
+                    <button class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-[#0F7173]">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Mobile Rating Filter -->
+            <div class="mb-6">
+                <h3 class="font-medium text-gray-700 mb-3">Rating</h3>
+                <div class="space-y-2">
+                    <label class="flex items-center">
+                        <input type="checkbox" class="form-checkbox text-[#0F7173] rounded focus:ring-[#0F7173]">
+                        <span class="ml-2 text-gray-600 flex items-center">
+                            <i class="fas fa-star text-yellow-400"></i>
+                            <i class="fas fa-star text-yellow-400"></i>
+                            <i class="fas fa-star text-yellow-400"></i>
+                            <i class="fas fa-star text-yellow-400"></i>
+                            <i class="fas fa-star text-yellow-400"></i>
+                        </span>
+                    </label>
+                    <label class="flex items-center">
+                        <input type="checkbox" class="form-checkbox text-[#0F7173] rounded focus:ring-[#0F7173]">
+                        <span class="ml-2 text-gray-600 flex items-center">
+                            <i class="fas fa-star text-yellow-400"></i>
+                            <i class="fas fa-star text-yellow-400"></i>
+                            <i class="fas fa-star text-yellow-400"></i>
+                            <i class="fas fa-star text-yellow-400"></i>
+                            <i class="far fa-star text-yellow-400"></i>
+                            <span class="ml-1">& Up</span>
+                        </span>
+                    </label>
+                    <label class="flex items-center">
+                        <input type="checkbox" class="form-checkbox text-[#0F7173] rounded focus:ring-[#0F7173]">
+                        <span class="ml-2 text-gray-600 flex items-center">
+                            <i class="fas fa-star text-yellow-400"></i>
+                            <i class="fas fa-star text-yellow-400"></i>
+                            <i class="fas fa-star text-yellow-400"></i>
+                            <i class="far fa-star text-yellow-400"></i>
+                            <i class="far fa-star text-yellow-400"></i>
+                            <span class="ml-1">& Up</span>
+                        </span>
+                    </label>
+                </div>
+            </div>
+            
+            <!-- Mobile Special Offers -->
+            <div class="mb-6">
+                <h3 class="font-medium text-gray-700 mb-3">Special Offers</h3>
+                <div class="space-y-2">
+                    <label class="flex items-center">
+                        <input type="checkbox" class="form-checkbox text-[#0F7173] rounded focus:ring-[#0F7173]">
+                        <span class="ml-2 text-gray-600">On Sale</span>
+                    </label>
+                    <label class="flex items-center">
+                        <input type="checkbox" class="form-checkbox text-[#0F7173] rounded focus:ring-[#0F7173]">
+                        <span class="ml-2 text-gray-600">New Arrivals</span>
+                    </label>
+                </div>
+            </div>
+            
+            <!-- Apply Filters Button -->
+            <div class="flex space-x-4">
+                <button class="flex-1 bg-[#0F7173] text-white px-4 py-2 rounded-lg hover:bg-[#0A4F51] transition-colors">
+                    Apply Filters
+                </button>
+                <button class="flex-1 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors">
+                    Clear All
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Newsletter Section -->
+    <section class="py-12 md:py-16 bg-gray-50">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-4">Join Our Newsletter</h2>
+            <p class="text-gray-600 mb-6 max-w-xl mx-auto">Stay updated with our latest products, special offers, and healthy recipes delivered straight to your inbox.</p>
+            <div class="max-w-md mx-auto flex">
+                <input type="email" placeholder="Your email address" class="flex-1 px-4 py-3 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-[#0F7173]">
+                <button class="bg-[#0F7173] text-white px-6 py-3 rounded-r-lg hover:bg-[#0A4F51] transition-colors">
+                    Subscribe
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Cart Modal -->
     <div id="cart-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4">
         <div class="bg-white rounded-lg w-full md:w-3/4 lg:w-1/2 max-h-[90vh] overflow-y-auto p-4 md:p-8 relative">
             <div class="flex justify-between items-center mb-4 md:mb-6">
@@ -171,7 +490,7 @@
                     <span class="text-xl md:text-2xl font-semibold">
                         Total: $<span id="cart-total">0</span>
                     </span>
-                    <button class="w-full md:w-auto bg-[#0F7173] text-white px-6 py-2 md:py-3 rounded-full hover:bg-[#0A4F51] transition-colors">
+                    <button class="w-full md:w-auto bg-[#0F7173] text-white px-6 py-2 md:py-3 rounded-full hover:bg-[#0A4F51] transition-colors cart-btn-effect">
                         Proceed to Checkout
                     </button>
                 </div>
@@ -179,119 +498,108 @@
         </div>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const cartModal = document.getElementById('cart-modal');
-            const cartBtn = document.getElementById('cart-btn');
-            const closeCartBtn = document.getElementById('close-cart');
-            const cartItems = document.getElementById('cart-items');
-            const cartTotal = document.getElementById('cart-total');
-            const emptyCartMessage = document.getElementById('empty-cart-message');
-
-            cartBtn.addEventListener('click', () => {
-                cartModal.classList.remove('hidden');
-                cartModal.classList.add('flex');
-            });
-
-            closeCartBtn.addEventListener('click', () => {
-                cartModal.classList.add('hidden');
-                cartModal.classList.remove('flex');
-            });
-
-            cartModal.addEventListener('click', (event) => {
-                if (event.target === cartModal) {
-                    cartModal.classList.add('hidden');
-                    cartModal.classList.remove('flex');
-                }
-            });
-
-            function handleResponsiveCart() {
-                const isMobile = window.innerWidth < 768;
-                const modalContent = document.querySelector('#cart-modal > div');
-                
-                if (isMobile) {
-                    modalContent.classList.remove('md:w-3/4', 'lg:w-1/2');
-                    modalContent.classList.add('w-full');
-                } else {
-                    modalContent.classList.add('md:w-3/4', 'lg:w-1/2');
-                    modalContent.classList.remove('w-full');
-                }
-            }
-
-            handleResponsiveCart();
-
-            window.addEventListener('resize', handleResponsiveCart);
-        });
-    </script>
-
+    <!-- Footer -->
     <footer class="bg-[#0F7173] text-white py-12 md:py-16">
         <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-8">
             <div>
-                <h3 class="text-2xl font-bold mb-4">SmartGrocery</h3>
+                <h3 class="text-2xl font-bold mb-4">FreshGrocer</h3>
                 <p class="text-white opacity-80 mb-4">Revolutionizing grocery shopping with smart technology and fresh, quality products.</p>
                 <div class="flex space-x-4">
-                    <a href="#" class="text-white hover:text-[#FF6B6B]"><i class="fab fa-twitter text-xl"></i></a>
-                    <a href="#" class="text-white hover:text-[#FF6B6B]"><i class="fab fa-instagram text-xl"></i></a>
-                    <a href="https://www.linkedin.com/in/manar-bouallaga-674783269/" class="text-white hover:text-[#FF6B6B]"><i class="fab fa-linkedin text-xl"></i></a>
+                    <a href="#" class="text-white hover:text-[#FF6B6B] transition-colors">
+                        <i class="fab fa-twitter text-xl"></i>
+                    </a>
+                    <a href="#" class="text-white hover:text-[#FF6B6B] transition-colors">
+                        <i class="fab fa-instagram text-xl"></i>
+                    </a>
+                    <a href="https://www.linkedin.com/in/manar-bouallaga-674783269/" class="text-white hover:text-[#FF6B6B] transition-colors">
+                        <i class="fab fa-linkedin text-xl"></i>
+                    </a>
                 </div>
             </div>
             <div>
                 <h4 class="font-semibold mb-4 text-white">Quick Links</h4>
                 <ul class="space-y-2">
-                    <li><a href="index.html" class="text-white opacity-80 hover:opacity-100">Home</a></li>
-                    <li><a href="shop.html" class="text-white opacity-80 hover:opacity-100">Shop</a></li>
-                    <li><a href="categories.html" class="text-white opacity-80 hover:opacity-100">Categories</a></li>
-                    <li><a href="about.html" class="text-white opacity-80 hover:opacity-100">About</a></li>
+                    <li><a href="index.html" class="text-white opacity-80 hover:opacity-100 transition-opacity">Home</a></li>
+                    <li><a href="shop.html" class="text-white opacity-80 hover:opacity-100 transition-opacity">Shop</a></li>
+                    <li><a href="categories.html" class="text-white opacity-80 hover:opacity-100 transition-opacity">Categories</a></li>
+                    <li><a href="about.html" class="text-white opacity-80 hover:opacity-100 transition-opacity">About</a></li>
                 </ul>
             </div>
             <div>
                 <h4 class="font-semibold mb-4 text-white">Support</h4>
                 <ul class="space-y-2">
-                    <li><a href="#" class="text-white opacity-80 hover:opacity-100">Help Center</a></li>
-                    <li><a href="#" class="text-white opacity-80 hover:opacity-100">Shipping</a></li>
-                    <li><a href="#" class="text-white opacity-80 hover:opacity-100">Returns</a></li>
-                    <li><a href="#" class="text-white opacity-80 hover:opacity-100">Contact</a></li>
+                    <li><a href="#" class="text-white opacity-80 hover:opacity-100 transition-opacity">Help Center</a></li>
+                    <li><a href="#" class="text-white opacity-80 hover:opacity-100 transition-opacity">Shipping</a></li>
+                    <li><a href="#" class="text-white opacity-80 hover:opacity-100 transition-opacity">Returns</a></li>
+                    <li><a href="#" class="text-white opacity-80 hover:opacity-100 transition-opacity">Contact</a></li>
                 </ul>
             </div>
             <div>
                 <h4 class="font-semibold mb-4 text-white">Newsletter</h4>
                 <p class="text-white opacity-80 mb-4">Stay updated with our latest offers and products.</p>
                 <div class="flex">
-                    <input type="email" placeholder="Your email" class="px-4 py-2 rounded-l-full w-full text-gray-800">
-                    <button class="bg-[#FF6B6B] text-white px-4 rounded-r-full hover:bg-[#FF5252]">
+                    <input type="email" placeholder="Your email" class="px-4 py-2 rounded-l-full w-full text-gray-800 focus:outline-none">
+                    <button class="bg-[#FF6B6B] text-white px-4 rounded-r-full hover:bg-[#FF5252] transition-colors">
                         Subscribe
                     </button>
                 </div>
             </div>
         </div>
         <div class="container mx-auto px-4 mt-8 text-center border-t border-[#0A4F51] pt-4">
-            <p class="text-white opacity-60">&copy; 2024 SmartGrocery. All Rights Reserved.</p>
+            <p class="text-white opacity-60">&copy; 2024 FreshGrocer. All Rights Reserved.</p>
         </div>
     </footer>
 
+    <!-- Scripts -->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const productItems = document.querySelectorAll('#products .product-card');
-            productItems.forEach((item, index) => {
-                item.style.animationDelay = `${index * 0.2}s`;
-                item.classList.add('animate-fade-in-up');
+        document.addEventListener('DOMContentLoaded', () => {
+            // Mobile menu toggle
+            const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+            const navMenu = document.getElementById('nav-menu');
+
+            mobileMenuToggle.addEventListener('click', () => {
+                navMenu.classList.toggle('hidden');
+                mobileMenuToggle.setAttribute('aria-expanded', 
+                    mobileMenuToggle.getAttribute('aria-expanded') === 'true' ? 'false' : 'true'
+                );
             });
 
-            productItems.forEach(product => {
-                product.addEventListener('mouseenter', () => {
-                    product.classList.add('animate-pulse');
-                });
-                product.addEventListener('mouseleave', () => {
-                    product.classList.remove('animate-pulse');
-                });
+            document.addEventListener('click', (event) => {
+                if (!navMenu.contains(event.target) && !mobileMenuToggle.contains(event.target)) {
+                    navMenu.classList.add('hidden');
+                    mobileMenuToggle.setAttribute('aria-expanded', 'false');
+                }
             });
 
-            const cartBtn = document.getElementById('cart-btn');
-            cartBtn.addEventListener('click', () => {
-                cartBtn.classList.add('animate-wiggle');
-                setTimeout(() => {
-                    cartBtn.classList.remove('animate-wiggle');
-                }, 500);
+            // Mobile filter drawer
+            const mobileFilterDrawer = document.getElementById('mobile-filter-drawer');
+            const closeFilterBtn = document.getElementById('close-filter');
+
+            // Add filter button for mobile
+            const sortBar = document.querySelector('.lg\\:w-3\\/4 > div:first-child');
+            const filterBtn = document.createElement('button');
+            filterBtn.className = 'md:hidden bg-[#0F7173] text-white px-4 py-2 rounded-lg hover:bg-[#0A4F51] transition-colors';
+            filterBtn.innerHTML = '<i class="fas fa-filter mr-2"></i> Filters';
+            filterBtn.addEventListener('click', () => {
+                mobileFilterDrawer.classList.remove('hidden');
+            });
+            sortBar.appendChild(filterBtn);
+
+            closeFilterBtn.addEventListener('click', () => {
+                mobileFilterDrawer.classList.add('hidden');
+            });
+
+            mobileFilterDrawer.addEventListener('click', (event) => {
+                if (event.target === mobileFilterDrawer) {
+                    mobileFilterDrawer.classList.add('hidden');
+                }
+            });
+
+            // Animation for product cards
+            const productCards = document.querySelectorAll('.product-card');
+            productCards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.1}s`;
+                card.classList.add('animate-fade-in-up');
             });
         });
     </script>
